@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 class CategoriaController extends Controller
 {
     public function __construct()
-{
-    $this->middleware('permission:crear categorias')->only(['create', 'store']);
-    $this->middleware('permission:listar categorias')->only(['index']);
-}
+    {
+        $this->middleware('permission:crear categorias')->only(['create', 'store']);
+        $this->middleware('permission:listar categorias')->only(['index']);
+    }
 
 
     public function index()

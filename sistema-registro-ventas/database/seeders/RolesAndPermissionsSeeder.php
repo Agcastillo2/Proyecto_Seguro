@@ -11,7 +11,12 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run()
     {
         // Reset cache
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        $admin = Role::create(['name' => 'admin']);
+        $secre = Role::create(['name' => 'secre']);
+        $bodega = Role::create(['name' => 'bodega']);
+        $cajera = Role::create(['name' => 'cajera']);
 
         // Crear permisos
         Permission::create(['name' => 'crear usuarios']);
@@ -24,24 +29,26 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'ver ventas propias']);
 
         // Crear roles y asignar permisos
-        $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo(['crear usuarios', 'ver usuarios']);
-
-        $secre = Role::create(['name' => 'secre']);
         $secre->givePermissionTo(['crear usuarios', 'ver usuarios']);
-
-        $bodega = Role::create(['name' => 'bodega']);
         $bodega->givePermissionTo([
             'crear categorias',
             'listar categorias',
             'crear productos',
             'listar productos'
         ]);
-
-        $cajera = Role::create(['name' => 'cajera']);
         $cajera->givePermissionTo([
             'crear ventas',
             'ver ventas propias'
         ]);
+
+        //crear usuario admin
+
+        $adminUser = \App\Models\User::create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('admin123')
+        ]);
+        $adminUser->assignRole('admin');
     }
 }

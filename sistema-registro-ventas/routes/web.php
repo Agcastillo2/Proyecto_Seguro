@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;    
-use App\Http\Controllers\CategoriaController; 
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\VentaController;
 
@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
 
 // Rutas protegidas por permisos
 Route::middleware(['auth'])->group(function () {
-    
+
     // Usuarios
     Route::resource('usuarios', UserController::class)
         ->middleware('permission:ver usuarios');

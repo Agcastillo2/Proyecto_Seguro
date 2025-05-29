@@ -1,47 +1,60 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Registrar Venta</h1>
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="mb-6 text-2xl font-bold text-gray-800">Registrar Venta</h1>
 
     @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+        <div class="mb-4 p-4 text-red-800 rounded-lg bg-red-50" role="alert">
+            {{ session('error') }}
+        </div>
     @endif
 
-    <form method="POST" action="{{ route('ventas.store') }}">
+    <form method="POST" action="{{ route('ventas.store') }}" class="space-y-6">
         @csrf
 
-        <table class="table" id="productos-table">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <select name="productos[0][producto_id]" class="form-control">
-                            @foreach($productos as $producto)
-                                <option value="{{ $producto->id }}">
-                                    {{ $producto->nombre }} - ${{ $producto->precio }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="productos[0][cantidad]" class="form-control" min="1" required>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500" id="productos-table">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3">Producto</th>
+                        <th class="px-6 py-3">Cantidad</th>
+                        <th class="px-6 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-6 py-2">
+                            <select name="productos[0][producto_id]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                @foreach($productos as $producto)
+                                    <option value="{{ $producto->id }}">
+                                        {{ $producto->nombre }} - ${{ $producto->precio }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td class="px-6 py-2">
+                            <input type="number" name="productos[0][cantidad]" min="1" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </td>
+                        <td class="px-6 py-2">
+                            <button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-800 bg-red-100 rounded hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 remove-row">Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <button type="button" class="btn btn-secondary" id="add-producto">Agregar Producto</button>
-        <button type="submit" class="btn btn-primary">Registrar Venta</button>
+        <div class="flex gap-2">
+            <button type="button" id="add-producto"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                Agregar Producto
+            </button>
+            <button type="submit"
+                class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                Registrar Venta
+            </button>
+        </div>
     </form>
 </div>
 
@@ -53,18 +66,19 @@ document.getElementById('add-producto').addEventListener('click', () => {
     const newRow = document.createElement('tr');
 
     newRow.innerHTML = `
-        <td>
-            <select name="productos[${rowCount}][producto_id]" class="form-control">
+        <td class="px-6 py-2">
+            <select name="productos[${rowCount}][producto_id]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                 @foreach($productos as $producto)
                     <option value="{{ $producto->id }}">{{ $producto->nombre }} - ${{ $producto->precio }}</option>
                 @endforeach
             </select>
         </td>
-        <td>
-            <input type="number" name="productos[${rowCount}][cantidad]" class="form-control" min="1" required>
+        <td class="px-6 py-2">
+            <input type="number" name="productos[${rowCount}][cantidad]" min="1" required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
         </td>
-        <td>
-            <button type="button" class="btn btn-danger btn-sm remove-row">Eliminar</button>
+        <td class="px-6 py-2">
+            <button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-800 bg-red-100 rounded hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 remove-row">Eliminar</button>
         </td>
     `;
 
