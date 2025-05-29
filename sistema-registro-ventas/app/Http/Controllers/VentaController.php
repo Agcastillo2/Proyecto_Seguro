@@ -16,10 +16,10 @@ class VentaController extends Controller
         $this->middleware('permission:ver ventas propias')->only(['index']);
     }
 
-
     public function index()
     {
-        $ventas = Venta::with('detalles.producto')->get();
+        $ventas = Venta::where('user_id', auth()->user()->id)->with('detalles.producto')->get();
+
         return view('ventas.index', compact('ventas'));
     }
     public function show(Venta $venta)
@@ -36,6 +36,7 @@ class VentaController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'productos.*.producto_id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1'
@@ -44,12 +45,19 @@ class VentaController extends Controller
         DB::beginTransaction();
 
         try {
-            $venta = Venta::create(['total' => 0]);
+            $idAuth = auth()->user()->id;
+            $venta = Venta::create(['total' => 0, 'user_id' => $idAuth]);
 
             $total = 0;
 
             foreach ($request->productos as $item) {
                 $producto = Producto::find($item['producto_id']);
+
+                if ($producto->stock < $item['cantidad']) {
+                    DB::rollback();
+                    return back()->with('danger', 'No hay suficiente stock para el producto: ' . $producto->nombre);
+                }
+
                 $subtotal = $producto->precio * $item['cantidad'];
 
                 DetalleVenta::create([
@@ -73,7 +81,7 @@ class VentaController extends Controller
             return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Error al registrar la venta: ' . $e->getMessage());
+            return back()->with('danger', 'Error al registrar la venta: ' . $e->getMessage());
         }
     }
 

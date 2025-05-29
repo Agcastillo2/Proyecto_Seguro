@@ -4,7 +4,7 @@
     <div class="max-w-lg mx-auto px-4 py-8">
         <h1 class="mb-6 text-2xl font-bold text-gray-800">Editar Producto</h1>
 
-        <form action="{{ route('productos.update', $producto->id) }}" method="POST" class="space-y-6">
+        <form id="producto-form" action="{{ route('productos.update', $producto->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
 
@@ -64,4 +64,36 @@
             </div>
         </form>
     </div>
+<script>
+$(function() {
+    $('#producto-form').validate({
+        rules: {
+            nombre: { required: true },
+            precio: { required: true, number: true },
+            stock: { required: true, digits: true },
+            categoria_id: { required: true }
+        },
+        messages: {
+            nombre: { required: "El nombre es obligatorio." },
+            precio: {
+                required: "El precio es obligatorio.",
+                number: "Debe ser un número válido."
+            },
+            stock: {
+                required: "El stock es obligatorio.",
+                digits: "Debe ser un número entero."
+            },
+            categoria_id: { required: "Seleccione una categoría." }
+        },
+        errorClass: 'text-red-600 text-sm mt-2',
+        errorElement: 'div',
+        highlight: function(element) {
+            $(element).addClass('border-red-500');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('border-red-500');
+        }
+    });
+});
+</script>
 @endsection

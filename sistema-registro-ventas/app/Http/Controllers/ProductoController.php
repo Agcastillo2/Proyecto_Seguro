@@ -63,7 +63,13 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
+        // Validar si el producto tiene ventas asociadas
+        if ($producto->detalles()->exists()) {
+            return redirect()->route('productos.index')->with('danger', 'No se puede eliminar el producto porque tiene ventas asociadas.');
+        }
+
         $producto->delete();
+
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

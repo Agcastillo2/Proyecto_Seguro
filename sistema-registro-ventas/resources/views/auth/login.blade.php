@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form id="login-form" method="POST" action="{{ route('login') }}">
         @csrf
 
         <!-- Email Address -->
@@ -44,4 +44,31 @@
             </x-primary-button>
         </div>
     </form>
+    <script>
+    $(function() {
+        $('#login-form').validate({
+            rules: {
+                email: { required: true, email: true },
+                password: { required: true }
+            },
+            messages: {
+                email: {
+                    required: "El correo es obligatorio.",
+                    email: "Debe ser un correo válido."
+                },
+                password: {
+                    required: "La contraseña es obligatoria."
+                }
+            },
+            errorClass: 'text-red-600 text-sm mt-2',
+            errorElement: 'div',
+            highlight: function(element) {
+                $(element).addClass('border-red-500');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('border-red-500');
+            }
+        });
+    });
+    </script>
 </x-guest-layout>

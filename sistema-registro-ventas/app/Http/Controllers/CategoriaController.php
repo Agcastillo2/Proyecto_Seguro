@@ -56,6 +56,10 @@ class CategoriaController extends Controller
 
     public function destroy(Categoria $categoria)
     {
+        //validar si no tiene productos asociados
+        if ($categoria->productos()->count() > 0) {
+            return redirect()->route('categorias.index')->with('danger', 'No se puede eliminar la categoría porque tiene productos asociados.');
+        }
         $categoria->delete();
         return redirect()->route('categorias.index')->with('success', 'Categoría eliminada correctamente.');
     }

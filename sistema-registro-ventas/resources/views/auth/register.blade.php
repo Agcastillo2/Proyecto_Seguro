@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form id="register-form" method="POST" action="{{ route('register') }}">
         @csrf
 
         <!-- Name -->
@@ -49,4 +49,42 @@
             </x-primary-button>
         </div>
     </form>
+    <script>
+    $(function() {
+        $('#register-form').validate({
+            rules: {
+                name: { required: true, maxlength: 255 },
+                email: { required: true, email: true },
+                password: { required: true, minlength: 8 },
+                password_confirmation: { required: true, equalTo: "#password" }
+            },
+            messages: {
+                name: {
+                    required: "El nombre es obligatorio.",
+                    maxlength: "El nombre no puede superar 255 caracteres."
+                },
+                email: {
+                    required: "El correo es obligatorio.",
+                    email: "Debe ser un correo válido."
+                },
+                password: {
+                    required: "La contraseña es obligatoria.",
+                    minlength: "La contraseña debe tener al menos 8 caracteres."
+                },
+                password_confirmation: {
+                    required: "La confirmación es obligatoria.",
+                    equalTo: "Las contraseñas no coinciden."
+                }
+            },
+            errorClass: 'text-red-600 text-sm mt-2',
+            errorElement: 'div',
+            highlight: function(element) {
+                $(element).addClass('border-red-500');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('border-red-500');
+            }
+        });
+    });
+    </script>
 </x-guest-layout>

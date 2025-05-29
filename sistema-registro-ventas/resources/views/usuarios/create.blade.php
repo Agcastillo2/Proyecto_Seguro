@@ -4,7 +4,7 @@
     <div class="max-w-lg mx-auto px-4 py-8">
         <h1 class="mb-6 text-2xl font-bold text-gray-800">Crear Usuario</h1>
 
-        <form action="{{ route('usuarios.store') }}" method="POST" class="space-y-6">
+        <form id="usuario-form" action="{{ route('usuarios.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <div>
@@ -59,4 +59,39 @@
                 class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Crear</button>
         </form>
     </div>
+    <script>
+        $(function() {
+            $('#usuario-form').validate({
+                rules: {
+                    name: { required: true, maxlength: 255 },
+                    email: { required: true, email: true },
+                    password: { required: true, minlength: 6 },
+                    role: { required: true }
+                },
+                messages: {
+                    name: {
+                        required: "El nombre es obligatorio.",
+                        maxlength: "El nombre no puede superar 255 caracteres."
+                    },
+                    email: {
+                        required: "El correo es obligatorio.",
+                        email: "Debe ser un correo válido."
+                    },
+                    password: {
+                        required: "La contraseña es obligatoria.",
+                        minlength: "La contraseña debe tener al menos 6 caracteres."
+                    },
+                    role: { required: "Seleccione un rol." }
+                },
+                errorClass: 'text-red-600 text-sm mt-2',
+                errorElement: 'div',
+                highlight: function(element) {
+                    $(element).addClass('border-red-500');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('border-red-500');
+                }
+            });
+        });
+    </script>
 @endsection

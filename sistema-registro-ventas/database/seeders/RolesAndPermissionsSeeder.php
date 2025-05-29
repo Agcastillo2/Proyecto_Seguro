@@ -10,15 +10,11 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        // Reset cache
-        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
         $admin = Role::create(['name' => 'admin']);
         $secre = Role::create(['name' => 'secre']);
         $bodega = Role::create(['name' => 'bodega']);
         $cajera = Role::create(['name' => 'cajera']);
 
-        // Crear permisos
         Permission::create(['name' => 'crear usuarios']);
         Permission::create(['name' => 'ver usuarios']);
         Permission::create(['name' => 'crear categorias']);
@@ -28,7 +24,6 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'crear ventas']);
         Permission::create(['name' => 'ver ventas propias']);
 
-        // Crear roles y asignar permisos
         $admin->givePermissionTo(['crear usuarios', 'ver usuarios']);
         $secre->givePermissionTo(['crear usuarios', 'ver usuarios']);
         $bodega->givePermissionTo([

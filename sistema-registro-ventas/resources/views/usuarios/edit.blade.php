@@ -4,7 +4,7 @@
 <div class="max-w-lg mx-auto px-4 py-8">
     <h1 class="mb-6 text-2xl font-bold text-gray-800">Editar Usuario</h1>
 
-    <form action="{{ route('usuarios.update', $usuario->id) }}" method="POST" class="space-y-6">
+    <form id="usuario-form" action="{{ route('usuarios.update', $usuario->id) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -54,4 +54,34 @@
         </div>
     </form>
 </div>
+<script>
+$(function() {
+    $('#usuario-form').validate({
+        rules: {
+            name: { required: true, maxlength: 255 },
+            email: { required: true, email: true },
+            role: { required: true }
+        },
+        messages: {
+            name: {
+                required: "El nombre es obligatorio.",
+                maxlength: "El nombre no puede superar 255 caracteres."
+            },
+            email: {
+                required: "El correo es obligatorio.",
+                email: "Debe ser un correo válido."
+            },
+            role: { required: "Seleccione un rol." }
+        },
+        errorClass: 'text-red-600 text-sm mt-2',
+        errorElement: 'div',
+        highlight: function(element) {
+            $(element).addClass('border-red-500');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('border-red-500');
+        }
+    });
+});
+</script>
 @endsection

@@ -13,6 +13,10 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.js"></script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -35,9 +39,11 @@
         class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
         <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 shadow-lg">
-            <a href="{{ route('dashboard') }}" class="flex items-center mb-6">
+            <a href="{{ route('dashboard') }}" class="flex items-center mb-6 flex-col">
+                <x-application-logo class="w-20 h-20 fill-current" />
+
                 <span
-                    class="self-center text-xl font-semibold whitespace-nowrap">{{ config('app.name', 'Laravel') }}</span>
+                    class="self-center text-xl font-semibold whitespace-nowrap text-gray-800">{{ config('app.name', 'Laravel') }}</span>
             </a>
             <ul class="space-y-2 font-medium">
                 <li>
@@ -143,7 +149,7 @@
         <!-- Header del dashboard -->
         <div class="flex items-center justify-between mb-4">
             <div>
-                <span class="text-lg font-semibold">{{ Auth::user()->name ?? '' }}</span>
+                <span class="text-lg font-semibold text-gray-800">{{ Auth::user()->name ?? '' }}</span>
             </div>
 
             {{-- Alertas tipo success, danger y warning --}}
