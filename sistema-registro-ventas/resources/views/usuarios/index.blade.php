@@ -16,6 +16,8 @@
                         <th scope="col" class="px-6 py-3">ID</th>
                         <th scope="col" class="px-6 py-3">Nombre</th>
                         <th scope="col" class="px-6 py-3">Email</th>
+                        <th scope="col" class="px-6 py-3">Rol</th>
+
                         @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('secre'))
                             <th scope="col" class="px-6 py-3">Acciones</th>
                         @endif
@@ -27,6 +29,10 @@
                             <td class="px-6 py-4">{{ $usuario->id }}</td>
                             <td class="px-6 py-4">{{ $usuario->name }}</td>
                             <td class="px-6 py-4">{{ $usuario->email }}</td>
+                            <td class="px-6 py-4">
+                                {{ $usuario->getRoleNames()->implode(', ') }}
+                            </td>
+
                             @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('secre'))
                                 <td class="px-6 py-4 flex gap-2">
                                     @if (!$usuario->hasRole('admin') || auth()->user()->hasRole('admin'))

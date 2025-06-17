@@ -9,10 +9,10 @@ use Illuminate\Http\Request;
 class ProductoController extends Controller
 {
     public function __construct()
-{
-    $this->middleware('permission:crear productos')->only(['create', 'store']);
-    $this->middleware('permission:listar productos')->only(['index']);
-}
+    {
+        $this->middleware('permission:crear productos')->only(['create', 'store']);
+        $this->middleware('permission:listar productos')->only(['index']);
+    }
 
 
     public function index()
@@ -30,9 +30,9 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required',
-            'precio' => 'required|numeric',
-            'stock' => 'required|integer',
+            'nombre' => 'required|unique:productos,nombre',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:1',
             'categoria_id' => 'required|exists:categorias,id'
         ]);
 
@@ -50,7 +50,7 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $request->validate([
-            'nombre' => 'required',
+            'nombre' => 'required|unique:productos,nombre,' . $producto->id,
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
             'categoria_id' => 'required|exists:categorias,id'

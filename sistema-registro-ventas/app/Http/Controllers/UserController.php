@@ -15,8 +15,6 @@ class UserController extends Controller
         $this->middleware('permission:ver usuarios')->only(['index']);
     }
 
-
-
     public function index()
     {
         $usuarios = User::all();
