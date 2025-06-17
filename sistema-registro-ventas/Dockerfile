@@ -1,41 +1,56 @@
-# Usamos una imagen base oficial con PHP 8.2 y el servidor web Caddy
-FROM dunglas/frankenphp:1.1-php8.2
+# --- ETAPA 1: CONSTRUCCIÓN DE DEPENDENCIAS ---
+# Usamos una imagen de PHP 8.2 con Composer para instalar las dependencias
+FROM composer:2 as vendor
 
-# Establecemos el directorio de trabajo dentro del contenedor
+WORKDIR /app
+COPY database/ database/
+COPY composer.json composer.lock ./
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist
+
+
+# --- ETAPA 2: LA IMAGEN FINAL DE PRODUCCIÓN ---
+# Usamos una imagen oficial de PHP 8.2 con FPM, optimizada para producción
+FROM php:8.2-fpm-alpine
+
+# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Instalamos las dependencias necesarias para Composer y Git
-RUN apt-get update && apt-get install -y \
+# Instalamos las dependencias del sistema: Nginx, Git, y extensiones de PHP comunes para Laravel
+RUN apk --no-cache add \
+    nginx \
+    supervisor \
     git \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_mysql zip bcmath
 
-# Descargamos e instalamos Composer globalmente
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiamos las dependencias primero para aprovechar el cache de Docker
-COPY composer.json composer.lock ./
-
-# Ahora sí, ejecutamos composer install.
-RUN composer install --no-dev --no-interaction --no-scripts --no-plugins --optimize-autoloader --ignore-platform-reqs
-
-# Copiamos el resto de los archivos de la aplicación
+# Copiamos el código de la aplicación (sin la carpeta vendor)
 COPY . .
 
-# Generamos el archivo .env a partir del de ejemplo
-RUN cp .env.example .env
+# Copiamos las dependencias de Composer que instalamos en la etapa 1
+COPY --from=vendor /app/vendor/ ./vendor/
 
-# Generamos la clave de la aplicación
-RUN php artisan key:generate
+# Copiamos los archivos de configuración de Nginx y Supervisor
+# (Estos los crearemos en el siguiente paso)
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
 
-# Establecemos los permisos correctos para Laravel
+# Generamos el archivo .env y la clave de la aplicación
+RUN cp .env.example .env && php artisan key:generate
+
+# Ajustamos los permisos para que Laravel pueda escribir en estas carpetas
 RUN chown -R www-data:www-data \
     storage \
     bootstrap/cache
 
-# --- LÍNEA NUEVA Y CRUCIAL ---
-# Damos permisos de ejecución al entrypoint y a frankenphp
-RUN chmod +x /usr/local/bin/docker-php-entrypoint /usr/local/bin/frankenphp
+# Exponemos el puerto 8080 que usará Nginx
+EXPOSE 8080
 
-# Exponemos el puerto que usará FrankenPHP
-EXPOSE 80 443 443/udp
+
+# El comando final para iniciar todo
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
