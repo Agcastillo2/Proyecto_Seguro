@@ -27,7 +27,7 @@ RUN apk --no-cache add \
     git \
     libzip-dev \
     zip \
-    && docker-php-ext-install pdo pdo_mysql zip bcmath
+    && docker-php-ext-install pdo pdo_pgsql zip bcmath
 
 # Copiamos el código de la aplicación (sin la carpeta vendor)
 COPY . .
@@ -36,11 +36,11 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Copiamos los archivos de configuración de Nginx y Supervisor
-# (Estos los crearemos en el siguiente paso)
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
-# Generamos el archivo .env y la clave de la aplicación
+# Generamos el archivo .env y la clave de la aplicación.
+# Esto asegura que siempre tengamos una APP_KEY válida generada en la construcción.
 RUN cp .env.example .env && php artisan key:generate
 
 # Ajustamos los permisos para que Laravel pueda escribir en estas carpetas
